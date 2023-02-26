@@ -1,0 +1,27 @@
+import numpy as np
+import pandas as pd
+from sklearn.linear_model import LinearRegression
+
+# 读取图像数据并建立时间序列
+data = pd.read_csv('image_data.csv')
+time_series = data[['time', 'angle', 'image']].values
+
+# 将时间序列分割为训练集和测试集
+train_size = int(0.8 * len(time_series))
+train_data, test_data = time_series[:train_size], time_series[train_size:]
+
+# 建立多元线性回归模型
+X_train = train_data[:, :2]  # 自变量为时间和角度
+y_train = train_data[:, 2]   # 因变量为图像像素值
+reg = LinearRegression().fit(X_train, y_train)
+
+# 预测图像
+X_test = test_data[:, :2]
+y_pred = reg.predict(X_test)
+
+# 可视化预测结果
+import matplotlib.pyplot as plt
+plt.plot(test_data[:, 2], label='True')
+plt.plot(y_pred, label='Predict')
+plt.legend()
+plt.show()
